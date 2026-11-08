@@ -1,0 +1,171 @@
+/* ---------- sólidos (variáveis --t, --s0..3, --e vêm de materialCss()) */
+.sd .f { fill: var(--s1); }
+.sd .s0 { fill: var(--s0); } .sd .s1 { fill: var(--s1); } .sd .s2 { fill: var(--s2); } .sd .s3 { fill: var(--s3); }
+.sd .t { fill: var(--t); }
+.ln { fill: none; stroke: var(--e, #23414e); stroke-width: .7; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.ln.cr { stroke: var(--t); opacity: .9; }
+.ln.band { opacity: .4; }
+.ln.red-band { stroke: #C9483F; stroke-width: 2; opacity: .9; }
+.ln.ladder, .ln.rail { stroke: #6f8790; stroke-width: .6; }
+.ln.twine { stroke: #a8862f; }
+.ln.conveyor { stroke: #6f8790; stroke-width: 1.4; }
+.ln.pole, .ln.rack { stroke: #6f8790; stroke-width: 1; }
+.ln.fence-top, .ln.fence-post { stroke: #8fa1a8; stroke-width: .6; }
+.ln.wall-line { stroke: #b9c4c8; stroke-width: 1.3; }
+.ln.tower { stroke: #6f8790; stroke-width: .7; }
+.ln.insul { stroke: #4f6670; stroke-width: 1.6; }
+.basebox .t { fill: none; }
+.basebox .ln.cr { stroke: #4f7b8c; }
+.lawn .t { fill: #D3E6BE; }
+.plot .ln.ol { stroke-opacity: .3; }
+.rf { stroke: var(--e); stroke-width: .7; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.rf.rt { fill: var(--s1); } .rf.rl { fill: var(--t); }
+.gb { fill: var(--s1); stroke: var(--e); stroke-width: .7; vector-effect: non-scaling-stroke; }
+.glz { fill: #a9cbd8; stroke: #6d8f9c; stroke-width: .5; vector-effect: non-scaling-stroke; }
+.dm { stroke: none; }
+.sph { stroke: #2e5a3a; stroke-width: .6; vector-effect: non-scaling-stroke; }
+.win { fill: #9cc6d6; stroke: #6e93a1; stroke-width: .35; vector-effect: non-scaling-stroke; }
+.win.lit { fill: #F6E7A8; }
+.louvre { fill: rgba(15, 37, 48, .22); }
+.storefront { fill: #8fb4c2; opacity: .75; }
+.storefront.side { fill: #6f97a6; }
+.brandband { fill: #00573A; }
+.door { fill: #8C6A4E; }
+.gate { fill: #7d8c93; }
+.flag { fill: #00573A; stroke: #1E3E4C; stroke-width: .4; }
+.yard { fill: #CFE3B6; }
+.road { fill: #BAC6CB; }
+.lane { fill: none; stroke: #fff; stroke-width: 1; stroke-dasharray: 4 5; vector-effect: non-scaling-stroke; opacity: .9; }
+.zebra { fill: #fff; opacity: .85; }
+.weigh { fill: #9aaab2; stroke: #6f8790; stroke-width: .5; }
+.field { fill: #BE9A6C; }
+.strawrow { fill: #E2C268; }
+.pasture { fill: #BADB93; }
+.court { fill: #7DB79A; }
+.courtline { fill: none; stroke: #fff; stroke-width: .8; vector-effect: non-scaling-stroke; }
+.plaza { fill: #E6E0D2; }
+.park { fill: #BCDDA0; }
+.walk { fill: #E6E0D2; }
+.gravel { fill: #D4D9D6; }
+.liquid.water { fill: #8CC3D9; }
+.liquid.manure { fill: #7A5230; }
+.liquid.dig { fill: #5E4026; }
+.gt { fill: #1E3E4C; opacity: .45; font-family: var(--font); font-weight: 700; letter-spacing: .12em; }
+.facelogo { fill: #fff; font-family: var(--font); font-weight: 700; letter-spacing: .06em; }
+.facelogo.roof { fill: #00573A; }
+.facelabel { fill: #fff; font-family: var(--font); font-weight: 700; letter-spacing: .06em; }
+.facelabel.dark { fill: #1E3E4C; opacity: .7; }
+.facelabel.brand { fill: #00573A; }
+
+/* ---------- fluxos */
+.flow .pipe { fill: none; stroke: #fff; stroke-width: 4.4; stroke-linecap: round; stroke-linejoin: round; opacity: .95; }
+.flow .core { fill: none; stroke: var(--c); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 7; }
+.flow.overhead .core { stroke-width: 1.1; stroke-dasharray: 2 5; }
+.flow.knowledge .core { stroke-width: 1.4; stroke-dasharray: 1 6; opacity: .8; }
+@keyframes flow { to { stroke-dashoffset: -24; } }
+.particle { fill: var(--c); stroke: #fff; stroke-width: .7; }
+.flow { transition: opacity .5s var(--ease); }
+.off { opacity: 0 !important; }
+/* destaque: contorno e brilho, nunca esmaecimento */
+#L-halo { pointer-events: none; }
+
+@keyframes halo { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.plot-hl { fill: rgba(182, 224, 59, .16); stroke: #B6E03B; stroke-width: 5; stroke-linejoin: round; opacity: .9; }
+.plot-ants { fill: none; stroke: #00573A; stroke-width: 1.6; stroke-dasharray: 6 5; stroke-linejoin: round; }
+@keyframes ants { to { stroke-dashoffset: -22; } }
+.flow.em .pipe { stroke-width: 6; }
+.flow.em .core { stroke-width: 3.2; }
+.flow.overhead.em .core { stroke-width: 2; }
+
+
+/* ---------- animações discretas */
+.breathing { animation: breathe 7s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 1.07); } }
+.flame { fill: #F2B705; stroke: #D37402; stroke-width: .6; animation: flicker .35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+.flame.blue { fill: #5AA9E6; stroke: #0072B2; }
+@keyframes flicker { from { transform: scale(.9, .85); opacity: .85; } to { transform: scale(1.05, 1.1); opacity: 1; } }
+.smoke { fill: #fff; opacity: 0; animation: smoke 5s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes smoke { 0% { opacity: 0; transform: translate(0, 0) scale(.5); } 15% { opacity: .75; } 100% { opacity: 0; transform: translate(10px, -36px) scale(2.2); } }
+.ch4 { opacity: 0; animation: ch4 4.4s ease-out infinite; }
+.ch4 circle { fill: rgba(127, 143, 151, .28); stroke: #7F8F97; stroke-width: .6; }
+.ch4 text { fill: #3b4d55; font: 700 4px var(--font); text-anchor: middle; dominant-baseline: central; }
+@keyframes ch4 { 0% { opacity: 0; transform: translate(0, 0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(6px, -34px); } }
+.bubble { fill: #fff; opacity: 0; animation: bubble 3.2s ease-in infinite; }
+@keyframes bubble { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: .9; } 100% { opacity: 0; transform: translateY(-16px); } }
+.spark { fill: none; stroke: #E5BE00; stroke-width: 1.4; animation: spark 1.3s steps(2) infinite; }
+@keyframes spark { 50% { opacity: 0; } }
+
+/* ---------- pinos */
+.pin { cursor: pointer; }
+.pin .pc { fill: var(--petrol); stroke: #fff; stroke-width: 2; }
+.pin .pt { fill: var(--lima); font: 700 10.5px var(--font); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.pin .ps { stroke: var(--petrol); stroke-width: 1.4; }
+.pin .ring { fill: none; stroke: var(--lima); stroke-width: 3; opacity: 0; }
+.pin.on .pc { fill: var(--verde-escuro); }
+.pin.on .ring { opacity: 1; animation: ping 1.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.pin:hover .pc, .pin:focus-visible .pc { fill: var(--verde-escuro); }
+.pin:focus { outline: none; }
+@keyframes ping { from { transform: scale(1); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
+.pin-label { font: 700 10.5px var(--font); fill: var(--petrol); paint-order: stroke; stroke: rgba(255, 255, 255, .95); stroke-width: 4px; stroke-linejoin: round; dominant-baseline: central; pointer-events: none; opacity: 0; transition: opacity .25s; }
+.pin:hover .pin-label, .pin:focus-visible .pin-label, .pin.on .pin-label { opacity: 1; }
+.cert .hx { stroke: #fff; stroke-width: 2; }
+.cert .ht { fill: #fff; font: 700 9px var(--font); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.cert:hover .hx { stroke: var(--lima); }
+[data-tag] { cursor: default; }
+
+/* ---------- acabamento: sombras, solo, céu, água */
+.shadow { fill: #1E3E4C; opacity: .13; }
+.strata.rock { fill: #3a5d6b; } .strata.rock.s { fill: #4a6f7d; }
+.strata.clay { fill: #8C6A4E; } .strata.clay.s { fill: #A27E5E; }
+.strata.topsoil { fill: #6B4F3A; } .strata.topsoil.s { fill: #7E5E45; }
+.pebble { fill: #C9B79C; opacity: .5; }
+.lot { fill: #C7D0D4; }
+.stall { fill: none; stroke: #fff; stroke-width: .8; vector-effect: non-scaling-stroke; }
+.solarp { fill: #2F4F6B; stroke: #9fb6c4; stroke-width: .4; vector-effect: non-scaling-stroke; }
+/* camadas HTML em coordenadas de mundo: animadas só com transform (GPU) */
+.worldhtml { position: absolute; left: 0; top: 0; width: 1px; height: 1px; transform-origin: 0 0; pointer-events: none; }
+.hcloud { position: absolute; width: 120px; height: 40px; will-change: transform; animation: drift 70s ease-in-out infinite alternate; }
+.hcloud.c1 { animation-duration: 90s; } .hcloud.c2 { animation-duration: 110s; animation-direction: alternate-reverse; }
+.hcloud i { position: absolute; background: #fff; opacity: .78; border-radius: 50%; }
+.hcloud i:nth-child(1) { left: -46px; top: -16px; width: 92px; height: 32px; }
+.hcloud i:nth-child(2) { left: -48px; top: -24px; width: 48px; height: 32px; }
+.hcloud i:nth-child(3) { left: -14px; top: -34px; width: 56px; height: 40px; }
+.hcloud i:nth-child(4) { left: 18px; top: -16px; width: 40px; height: 24px; }
+@keyframes drift { from { transform: translateX(-40px) scale(var(--s)); } to { transform: translateX(60px) scale(var(--s)); } }
+
+@keyframes shimmer { 50% { fill: #A6D3E4; } }
+
+/* ---------- vida: conexões ao passar o mouse */
+#ly-halo-hover { opacity: .75; }
+.flow .core.hot { stroke-width: 3.6; filter: drop-shadow(0 0 2px var(--c)); }
+
+#L-objects [data-tag], #L-ground [data-tag] { cursor: pointer; }
+.cow { animation: graze 10s ease-in-out infinite; }
+@keyframes graze { 0%, 100% { transform: translate(0, 0); } 30% { transform: translate(2.5px, 1px); } 60% { transform: translate(-1.5px, 1.6px); } }
+
+/* ---------- água e floresta */
+.river { fill: #6FB3D2; }
+.lake { fill: #6FB3D2; }
+@keyframes shimmer2 { 50% { fill: #84C2DC; } }
+.bank, .bankfill { fill: #E8DDBF; }
+.pond { fill: #7DBAD6; }
+.current { fill: none; stroke: #fff; stroke-width: .6; stroke-dasharray: 6 26; opacity: .3; vector-effect: non-scaling-stroke; }
+.current.c1 { stroke-dasharray: 4 30; } .current.c2 { stroke-dasharray: 10 40; }
+@keyframes current { to { stroke-dashoffset: -64; } }
+.creek { fill: none; stroke: #6FB3D2; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.spring { fill: #84C2DC; stroke: #fff; stroke-width: .6; }
+.euca-trunk { stroke: #CFC2AE; stroke-width: 1; }
+.euca-crown { fill: #8DB86B; stroke: #5E8C46; stroke-width: .5; vector-effect: non-scaling-stroke; }
+.euca-crown.b { fill: #7CAA5C; }
+.gasband { fill: #E69F00; }
+.boat .hull { fill: #fff; stroke: #1E3E4C; stroke-width: .5; }
+.boat .sail { fill: #fff; stroke: #9aaab2; stroke-width: .4; }
+.boat .sail.s2 { fill: #B6E03B; }
+
+/* Cocal: vinhaça, canal, digestato e diques */
+.liquid.vinasse { fill: #5A3A22; }
+.canal-bank { fill: none; stroke: #B79B78; stroke-width: 7; stroke-linejoin: round; stroke-linecap: round; }
+.canal { fill: none; stroke: #6B4426; stroke-width: 4.2; stroke-linejoin: round; stroke-linecap: round; }
+.hose { fill: none; stroke: #2F3A33; stroke-width: 1; stroke-dasharray: 2 1.4; }
+.bund { fill: #DCD8CE; stroke: #B9B3A6; stroke-width: 1; }
+.strawrow.wet { fill: #8C7A4A; }

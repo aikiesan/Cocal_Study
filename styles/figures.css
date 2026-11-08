@@ -1,0 +1,78 @@
+/* Figuras do painel — limpas, sem molduras, fonte única. */
+.figure { margin: 4px 0 14px; }
+.fig { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font); }
+.fig .fl { font-size: 11.5px; fill: var(--petrol); font-weight: 700; }
+.fig .fl.strong { font-size: 12.5px; }
+.fig .fl.bad { fill: #D55E00; } .fig .fl.good { fill: #007A58; }
+.fig .fn { font-size: 10.5px; fill: var(--ink-muted); }
+.fig .fn.strong { fill: var(--petrol); font-weight: 700; }
+.fig .fv { font-size: 11px; font-weight: 700; fill: var(--petrol); }
+.fig .fv.on { fill: #fff; }
+.fig .fk { font-size: 11.5px; font-weight: 700; fill: var(--petrol); letter-spacing: .02em; }
+.fig .fk.bad { fill: #D55E00; } .fig .fk.good { fill: #007A58; }
+.fig .fu { font-size: 10px; fill: var(--ink-muted); font-style: italic; }
+.fig .fbig { font-size: 15px; font-weight: 700; fill: var(--petrol); }
+.fig .fbig.on { fill: #fff; }
+.fig .fhuge { font-size: 30px; font-weight: 700; fill: #009E73; text-anchor: middle; }
+.fig .ic { fill: none; stroke: var(--petrol); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.fig .ic-t { fill: var(--petrol); stroke: none; font-weight: 700; }
+.fig .arr { fill: none; stroke: var(--line-strong); stroke-width: 1.4; }
+.fig .flowing { stroke-dasharray: 4 4; animation: dash 1.2s linear infinite; }
+.fig .ring { fill: none; stroke: var(--line); stroke-width: 2; }
+.fig .ring.flowing { stroke: #c9d2d6; stroke-dasharray: 6 6; }
+.fig .link { stroke-width: 1.6; fill: none; }
+.fig .brace { fill: none; stroke: var(--petrol); stroke-width: 1; }
+.fig .brk { stroke: #fff; stroke-width: 2.5; }
+.fig .whisk { stroke: var(--petrol); stroke-width: 1.2; fill: none; }
+.fig .chipbg { fill: var(--paper-sunken); stroke: var(--line); }
+@keyframes dash { to { stroke-dashoffset: -16; } }
+.fig .grow { transform-box: fill-box; transform-origin: left center; animation: grow .9s var(--ease) both; }
+@keyframes grow { from { transform: scaleX(0); } }
+.fig .pop { transform-box: fill-box; transform-origin: center; animation: pop .55s var(--ease) both; }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } }
+.fig .band.pop { transform-origin: left center; animation-name: growb; }
+@keyframes growb { from { transform: scaleX(0); opacity: 0; } }
+.fig .d1 { animation-delay: .08s; } .fig .d2 { animation-delay: .16s; } .fig .d3 { animation-delay: .24s; } .fig .d4 { animation-delay: .32s; } .fig .d5 { animation-delay: .4s; } .fig .d6 { animation-delay: .48s; } .fig .d7 { animation-delay: .56s; } .fig .d8 { animation-delay: .64s; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.kpi { padding: 10px 10px 9px; background: var(--paper-sunken); border-radius: 10px; border-top: 3px solid var(--k); }
+.kv { font-size: 17px; font-weight: 700; color: var(--k); line-height: 1.1; }
+.kl { font-size: 11px; color: var(--petrol); margin-top: 4px; line-height: 1.3; }
+.ks { font-size: 10px; color: var(--ink-muted); margin-top: 4px; line-height: 1.3; }
+.gauge { position: relative; height: 6px; border-radius: 3px; background: var(--line); margin-top: 8px; }
+.gfill { height: 100%; border-radius: 3px; }
+.gmark { position: absolute; top: -3px; width: 2px; height: 12px; background: var(--petrol); }
+.gaxis { display: flex; justify-content: space-between; font-size: 9px; color: var(--ink-muted); margin-top: 3px; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.col { padding: 10px; border-radius: 10px; background: var(--paper-sunken); border-top: 3px solid #5F7C88; }
+.colic { width: 34px; height: 34px; }
+.colic .ic { fill: none; stroke: var(--petrol); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.colic .ic-t { fill: var(--petrol); stroke: none; font: 700 7px var(--font); }
+.ct { font-weight: 700; font-size: 13px; color: var(--petrol); margin-top: 2px; }
+.cn { font-size: 11.5px; color: var(--ink-muted); line-height: 1.4; margin-top: 3px; }
+.markets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.markets span { font-size: 11.5px; padding: 4px 10px; border-radius: 999px; background: var(--paper-sunken); border: 1px solid var(--line); color: var(--petrol); }
+@media (max-width: 420px) { .kpis { grid-template-columns: 1fr; } }
+
+/* figuras que conversam com o mapa */
+.fig [data-tag] { cursor: pointer; }
+.fig .row .hit { fill: transparent; }
+.fig .row:hover .hit { fill: #F4F7F8; }
+.fig .node[data-tag]:hover circle { stroke: #00573A; stroke-width: 2; }
+.fignote { font-size: 10.5px; font-style: italic; color: var(--ink-muted); margin-top: 6px; }
+
+/* lista de valores com classe de dado */
+.facts { display: grid; gap: 6px; margin: 4px 0 6px; }
+.fact { display: grid; grid-template-columns: minmax(104px, auto) 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; background: var(--paper-sunken); border-radius: 10px; }
+.fact.dim { opacity: .5; }
+.fact-v { font-weight: 700; font-size: 17px; color: var(--petrol); line-height: 1.1; white-space: nowrap; }
+.fact-v small { display: block; font-size: 10.5px; font-weight: 600; color: var(--ink-muted); }
+.fact-l { font-size: 12.5px; color: var(--ink); line-height: 1.3; }
+.fact-l em { display: block; font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+.dc { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .02em; padding: 2px 7px; border-radius: 999px; color: var(--dc); background: color-mix(in srgb, var(--dc) 12%, transparent); border: 1px solid color-mix(in srgb, var(--dc) 35%, transparent); white-space: nowrap; }
+.dcs { display: flex; flex-wrap: wrap; gap: 5px; margin: -4px 0 10px; }
+.fig .col { fill: #F6D488; }
+.fig .col.safra { fill: #F0A202; }
+.fig .col.on { stroke: var(--petrol); stroke-width: 1.6; }
+.fig .refline { stroke: var(--ink-muted); stroke-dasharray: 3 3; stroke-width: 1; }
+@media (max-width: 420px) { .fact { grid-template-columns: 1fr auto; } .fact-l { grid-column: 1 / -1; } }
