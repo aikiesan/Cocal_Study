@@ -28,8 +28,10 @@
     </nav>
     <nav class="modes" aria-label="Modo de visualização">
       <button type="button" id="btn-overview" class="pill on" aria-pressed="true">Visão geral</button>
+      <button type="button" id="btn-journey" class="pill" aria-pressed="false">Siga o carbono</button>
       <button type="button" id="btn-tour" class="pill" aria-pressed="false">Tour guiado</button>
     </nav>
+    <button type="button" id="btn-panel-toggle" class="panel-toggle-btn" title="Ocultar ou mostrar painel lateral (P)" aria-label="Alternar painel lateral" aria-expanded="true">⇥</button>
   </header>
 
   <main class="app">
@@ -38,18 +40,52 @@
       <div id="world" class="layers" role="img" aria-label="Diorama isométrico animado do complexo Cocal em Narandiba: canaviais e a usina de açúcar e etanol enviam vinhaça e torta de filtro à usina de biogás; dela saem eletricidade pela subestação, biometano por gasoduto até Presidente Prudente, CO₂ verde e digestato de volta ao canavial."></div>
       <div class="loading" id="loading">Montando a usina…</div>
       <div class="hud" id="hud">
-        <div class="clock"><span class="ico" id="clk-ico">☀</span><b id="clk-time">10:00</b><span id="clk-month">junho</span><span class="season" id="clk-season">safra</span><button type="button" id="clk-pause" aria-label="Pausar o relógio">❚❚</button></div>
-        <div class="hud-k">Desde que você abriu esta página, no relógio do diorama</div>
-        <div class="hud-row"><span class="hud-v" id="hud-pot">0</span><span class="hud-u">m³ de biogás processados, na média mensal informada à ANP</span></div>
-        <div class="hud-bar"><i id="hud-bar-real"></i></div>
-        <div class="hud-row small"><span class="hud-v2" id="hud-real">—</span><span class="hud-u">da capacidade autorizada (51.600 m³/d de biogás)</span></div>
-        <div class="hud-eq" id="hud-eq"></div>
-        <div class="gasbar" title="Nível ilustrativo da cúpula; a capacidade não é publicada">Cúpula <span><i id="gas-lvl"></i></span></div>
+        <div class="clock">
+          <span class="ico" id="clk-ico">☀</span>
+          <b id="clk-time">10:00</b>
+          <span id="clk-month">outubro</span>
+          <span class="season" id="clk-season">safra</span>
+          <button type="button" id="clk-pause" title="Pausar ou retomar relógio" aria-label="Pausar o relógio">❚❚</button>
+          <button type="button" id="hud-toggle" class="hud-toggle" title="Expandir ou recolher contador ao vivo" aria-label="Alternar contador ao vivo" aria-expanded="false">▾</button>
+        </div>
+        <div class="hud-compact-row" id="hud-compact-row" title="Clique para ver detalhes">
+          <span class="hud-dot"></span>
+          <b id="hud-pot-mini">0</b>
+          <span>m³ biogás</span>
+          <small id="hud-mini-pct">(49% ANP)</small>
+        </div>
+        <div class="hud-body" id="hud-body" hidden>
+          <div class="hud-k">Desde que você abriu esta página, no relógio do diorama</div>
+          <div class="hud-row"><span class="hud-v" id="hud-pot">0</span><span class="hud-u">m³ de biogás processados, na média mensal informada à ANP</span></div>
+          <div class="hud-bar"><i id="hud-bar-real"></i></div>
+          <div class="hud-row small"><span class="hud-v2" id="hud-real">—</span><span class="hud-u">da capacidade autorizada (51.600 m³/d de biogás)</span></div>
+          <div class="hud-eq" id="hud-eq"></div>
+          <div class="gasbar" title="Nível ilustrativo da cúpula; a capacidade não é publicada">Cúpula <span><i id="gas-lvl"></i></span></div>
+        </div>
         <button type="button" class="journey-btn" id="journey-btn">▶ Siga o carbono</button>
       </div>
-      <div class="caption" id="caption" hidden><div class="cap-step" id="cap-step"></div><div class="cap-text" id="cap-text"></div></div>
+      <div class="caption" id="caption" hidden>
+        <div class="cap-top">
+          <span class="cap-badge" id="cap-badge">CO₂</span>
+          <span class="cap-zone" id="cap-zone">Canavial</span>
+          <div class="cap-step" id="cap-step" role="tablist" aria-label="Etapas do ciclo do carbono"></div>
+          <div class="cap-ctrls">
+            <button type="button" id="cap-prev" class="cap-btn" title="Trecho anterior (←)" aria-label="Trecho anterior">‹</button>
+            <button type="button" id="cap-pause" class="cap-btn" title="Pausar ou retomar (Espaço)" aria-label="Pausar">❚❚</button>
+            <button type="button" id="cap-next" class="cap-btn" title="Próximo trecho (→)" aria-label="Próximo trecho">›</button>
+            <button type="button" id="cap-cam" class="cap-btn on" title="Acompanhar com a câmera" aria-label="Acompanhar com a câmera" aria-pressed="true">⌖</button>
+            <button type="button" id="cap-close" class="cap-btn" title="Sair (Esc)" aria-label="Sair">✕</button>
+          </div>
+        </div>
+        <div class="cap-text" id="cap-text"></div>
+      </div>
       <div class="tip" id="tip" hidden></div>
       <div class="legend" id="legend" aria-label="Legenda e camadas"></div>
+      <div class="zoom-ctrls" id="zoom-ctrls" aria-label="Controles do mapa">
+        <button type="button" id="zm-in" class="zm-btn" title="Aproximar (+)" aria-label="Aproximar">+</button>
+        <button type="button" id="zm-out" class="zm-btn" title="Afastar (−)" aria-label="Afastar">−</button>
+        <button type="button" id="zm-reset" class="zm-btn zm-reset" title="Enquadrar mapa inteiro (0)" aria-label="Enquadrar mapa inteiro" hidden>⟲</button>
+      </div>
       <button type="button" class="back-overview" id="back-overview" hidden>⤺ Visão geral</button>
     </section>
 
@@ -58,7 +94,8 @@
       <div class="panel-body" id="panel-body"></div>
       <footer class="panel-nav" id="panel-nav">
         <button type="button" id="prev" class="nav-btn" aria-label="Etapa anterior">‹</button>
-        <div class="progress" id="progress"></div>
+        <button type="button" id="tour-auto" class="tour-auto" title="Avanço automático (Espaço)" aria-label="Alternar avanço automático" aria-pressed="true"><span id="tour-auto-ico">❚❚</span><small>Auto</small></button>
+        <div class="progress" id="progress"><i class="auto-bar" id="auto-bar"></i></div>
         <button type="button" id="next" class="nav-btn primary" aria-label="Próxima etapa">›</button>
       </footer>
     </aside>

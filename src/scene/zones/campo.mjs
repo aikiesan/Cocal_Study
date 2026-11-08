@@ -10,7 +10,7 @@ function canavial(S, tag, x, y, w, d, { cutFrom = 1, wet = 0 } = {}) {
     const yy = y + 6 + i * 12;
     const cut = i >= Math.floor(n * cutFrom);
     if (cut) S.floor(groundRect(x + 4, yy, w - 8, 5, wet && i < Math.floor(n * cutFrom) + wet ? "strawrow wet" : "strawrow", 1.75));
-    else S.add(`<g class="canerow" style="transition-delay:${(i % 12) * 0.12}s">` + box(x + 4, yy, w - 8, 5, 1.6, 7 + (i % 3), "cane", { r: 2, steps: 3 }) + `</g>`, [x + w / 2, yy + 2.5, 0], tag);
+    else S.add(`<g class="canerow">` + box(x + 4, yy, w - 8, 5, 1.6, 7 + (i % 3), "cane", { r: 2, steps: 3 }) + `</g>`, [x + w / 2, yy + 2.5, 0], tag);
   }
 }
 

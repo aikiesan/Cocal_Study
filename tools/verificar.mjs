@@ -63,13 +63,14 @@ try {
   for (const modo of ["projeto", "auditado"]) {
     await evalJs(`document.querySelector('[data-datamode="${modo}"]').click()`);
     await evalJs(`document.getElementById("btn-tour").click()`);
+    await evalJs(`(() => { const a = document.getElementById("tour-auto"); if (a && a.classList.contains("on")) a.click(); })()`);
     await sleep(600);
     for (let i = 0; i < 30; i++) {
       const h = await evalJs("location.hash");
       seen.add(h);
-      if (modo === "projeto" && ["#intro", "#cana", "#digestato", "#gasoduto", "#anp"].includes(h)) { await sleep(1800); await shot(`etapa-${h.slice(1)}`); }
+      if (modo === "projeto" && ["#cana", "#digestato", "#limites", "#anp"].includes(h)) { await sleep(1400); await shot(`etapa-${h.slice(1)}`); }
       const end = await evalJs(`(() => { const b = document.getElementById("next"); if (!b || b.disabled) return true; b.click(); return false; })()`);
-      await sleep(350);
+      await sleep(300);
       if (end) break;
     }
     await evalJs(`document.getElementById("btn-overview").click()`);
@@ -77,12 +78,12 @@ try {
   }
   console.log("etapas visitadas no tour:", seen.size);
   await evalJs(`document.getElementById("journey-btn").click()`);
-  await sleep(6000);
+  await sleep(5000);
   await shot("02-siga-o-carbono");
   await evalJs(`document.getElementById("journey-btn").click()`);
-  await send("Page.navigate", { url: URL_ + "?hora=21" });
+  await send("Page.navigate", { url: URL_ + "?mes=12&hora=19#cana" });
   await sleep(4000);
-  await shot("03-noite");
+  await shot("03-cana-dezembro");
   await view(390, 844, true);
   await send("Page.navigate", { url: URL_ + "?hora=11" });
   await sleep(4000);

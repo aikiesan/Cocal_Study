@@ -256,8 +256,7 @@ export function buildStops(modo = "projeto") {
       figure: { type: "twoCols", cols: [
         { title: "Lido em imagem", icon: "check", note: "digestores, bunkers, esteira, cúpula, lagoas, canais de vinhaça (OSM), subestação (OSM) e lote do CAR da usina", tag: "horizontais" },
         { title: "Sem posição pública", icon: "doc", note: "THIOPAQ, motores, purificação, CO₂, compressão, flare, separação, Lesaffre e talhões do digestato", tag: "thiopaq" }] },
-      text: ["O complexo foi reconstruído num gêmeo digital em Blender a partir de imagens de satélite, OpenStreetMap e do Cadastro Ambiental Rural, que confirma um lote de 20 ha em volta da usina de biogás."],
-      link: { href: "https://github.com/aikiesan/cocal_simulation", label: "Ver o gêmeo digital" },
+      text: ["O complexo foi mapeado a partir de imagens de satélite, OpenStreetMap e do Cadastro Ambiental Rural, que confirma um lote de 20 ha em volta da usina de biogás."],
       tags: ["usina"], streams: "all", anchor: [135, -170, 40], focus: "all", sources: ["gemeo", "sicar", "osm", "ecossistema"], dc: ["inferido", "esquematico"],
     },
   ];

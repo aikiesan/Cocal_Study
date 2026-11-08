@@ -19,9 +19,6 @@ const mixHex = (a, b, t) => { const A = [1, 3, 5].map((i) => parseInt(a.slice(i,
 export function createAmbient(stage, { night, onTick, daySeconds, startHour = 10, startMonth = 5 }) {
   const DAY_S = daySeconds > 0 ? daySeconds : DAY_S_DEFAULT;
   const { root, iso } = stage;
-  const map = root.closest(".map");
-  // camadas: véu noturno (só tinge o céu e a cena levemente) + luzes acima dele
-  
   const lights = document.getElementById("L-lights");
   const lightsLayer = document.getElementById("ly-lights");
   const skyNight = document.getElementById("sky-night");
@@ -39,7 +36,7 @@ export function createAmbient(stage, { night, onTick, daySeconds, startHour = 10
     const [gx, gy] = P([x, y, 1.8]), [lx, ly] = P([x, y, 14.4]);
     return `<ellipse cx="${gx}" cy="${gy}" rx="17" ry="8.5" fill="url(#lg-lamp)"/><circle cx="${lx}" cy="${ly}" r="4.5" fill="url(#lg-lamp)"/><circle class="lamp-core" cx="${lx}" cy="${ly}" r="1.3"/>`;
   }).join("");
-  // refletores e locais iluminados (usina, city gate, posto, ETE, indústria, universidade, serraria)
+  // refletores e locais iluminados
   const floods = [[540, 200, 80], [690, 70, 50], [640, 270, 50], [520, 550, 70], [620, 560, 60], [980, 570, 55], [980, 780, 60], [900, 60, 50], [770, -120, 30], [960, -200, 60], [100, -220, 50], [430, 380, 40]]
     .map(([x, y, r]) => { const [cx, cy] = P([x, y, 2]); return `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r / 2}" fill="url(#lg-flood)"/>`; }).join("");
   // bioenergia acesa: chama do flare, aro de LEDs verdes nos biodigestores, CHP e purificação
@@ -52,7 +49,7 @@ export function createAmbient(stage, { night, onTick, daySeconds, startHour = 10
   }
   for (const p of [[558, 253, 14], [664, 267, 20], [588, 331, 10], [680, 332, 20], [636, 205, 20], [1020, -117, 8]]) { const [gx, gy] = P(p); bio += `<circle cx="${gx}" cy="${gy}" r="14" fill="url(#lg-green)"/>`; }
   // cozinhas: uma pequena chama azul na janela de cada casa
-  const kitchens = night.houses.map(([x, y, w, d, h], i) => {
+  const kitchens = night.houses.map(([x, y, w, d], i) => {
     const [sx, sy] = iso([x + w, y + d * 0.35, 3.2]);
     return `<g class="kitchen" data-i="${i}"><circle class="kglow" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="4"/><path class="flame blue" d="M${sx.toFixed(1)},${(sy + 1).toFixed(1)} c-1.2,-1.6 -.8,-3.6 0,-5 c.8,1.6 1.2,3.4 0,5Z"/></g>`;
   }).join("");
@@ -62,7 +59,6 @@ export function createAmbient(stage, { night, onTick, daySeconds, startHour = 10
 
   const gh = root.querySelector(".gasholder");
   if (gh) { const [x, y] = iso([...SPOTS.dome, 2]); gh.style.transformOrigin = `${x}px ${y}px`; }
-  
 
   let running = !matchMedia("(prefers-reduced-motion: reduce)").matches;
   let base = startHour * (DAY_S / 24) + startMonth * DAY_S; // padrão: 10h de junho
@@ -100,9 +96,6 @@ export function createAmbient(stage, { night, onTick, daySeconds, startHour = 10
     if (m !== lastMonth) {
       lastMonth = m;
       document.body.classList.toggle("entressafra", !SAFRA(m));
-      // a cana cresce na entressafra (dez → mar) e está alta na safra
-      const grow = SAFRA(m) ? 1 : [0.3, 0.45, 0.6, 0.8][(m + 1) % 12] ?? 0.4;
-      root.style.setProperty("--cane", grow);
     }
     stage.emitClock(h);
     onTick({ h, m, month: MONTHS[m], safra: SAFRA(m), pico: PICO(m), night: n, demand: dem, gasLevel: 0.55 + 0.35 * Math.cos((2 * Math.PI * (h - 8)) / 24), running });

@@ -2,7 +2,7 @@
 //
 // Dois modos:
 //  • Visão geral — o quadro fica PARADO. Tocar num pino/zona só abre o painel
-//    e destaca a zona no mapa (sem zoom).
+//    e destaca a zona no mapa (sem zoom), com zoom/pan livre pelo mouse/toque.
 //  • Tour guiado — a câmera aproxima suavemente cada etapa, em ordem.
 import { buildStops, CHAPTERS } from "./content/paradas.mjs";
 import { createStage } from "./ui/stage.mjs";
@@ -10,7 +10,7 @@ import { renderIndex, renderStop, renderLegend } from "./ui/panel.mjs";
 import { addLife } from "./ui/life.mjs";
 import { createJourney } from "./ui/journey.mjs";
 import { createAmbient } from "./ui/ambient.mjs";
-import { anpDoMes, BIOMETANO } from "./data/numeros.mjs";
+import { anpDoMes } from "./data/numeros.mjs";
 
 const $ = (id) => document.getElementById(id);
 // ---------- modo tela (papel de parede / proteção de tela / vídeo)
@@ -44,7 +44,9 @@ stage.onFrame((t) => {
   const dt = lastT ? Math.min(0.1, t - lastT) : 0; lastT = t;
   if (ambient?.running) total += dt * rate;
   if (t - lastHud < 0.1) return; lastHud = t;
-  $("hud-pot").textContent = nf.format(total);
+  const s = nf.format(total);
+  $("hud-pot").textContent = s;
+  if ($("hud-pot-mini")) $("hud-pot-mini").textContent = s;
 });
 // destaca no gráfico da ANP (se aberto) o mês em que está o relógio
 const markMonth = () => { for (const el of body.querySelectorAll(".fig .col[data-k]")) el.classList.toggle("on", !!curRec && el.dataset.k === curRec.ym); };
@@ -56,6 +58,7 @@ function setMonth(m, safra) {
   rate = rec ? rec.m3d / (Number(params.get("dia")) || 60) : 0;
   $("hud-bar-real").style.width = rec ? `${rec.pct}%` : "0%";
   $("hud-real").textContent = rec ? `${rec.pct}%` : "—";
+  if ($("hud-mini-pct")) $("hud-mini-pct").textContent = rec ? `(${rec.pct}% ANP)` : "(s/ dado ANP)";
   $("hud-eq").innerHTML = rec
     ? `ANP · ${MES_CURTO[m]}/${rec.ym.slice(2, 4)}: <b>${nf.format(rec.m3d)}</b> m³/d de biogás`
     : `ANP · ${MES_CURTO[m]}: <b>sem dado utilizável</b> (série de ago/25 a abr/26)`;
@@ -66,6 +69,16 @@ function setMonth(m, safra) {
   stage.setSpeed("substrato", safra ? 1 : 0.4);
   markMonth();
 }
+
+const toggleHud = () => {
+  const exp = $("hud-body").hidden;
+  $("hud-body").hidden = !exp;
+  $("hud-compact-row").hidden = exp;
+  $("hud-toggle").textContent = exp ? "▴" : "▾";
+  $("hud-toggle").setAttribute("aria-expanded", String(exp));
+};
+$("hud-toggle").onclick = toggleHud;
+$("hud-compact-row").onclick = toggleHud;
 
 // ---------- relógio: dia/noite, demanda de gás e safra da cana
 var ambient = createAmbient(stage, {
@@ -91,15 +104,73 @@ $("clk-pause").onclick = () => { const r = ambient.toggle(); $("clk-pause").text
 body.addEventListener("pointerover", (e) => { const g = e.target.closest("[data-tag]"); if (g && !journey.running) stage.hover(g.dataset.tag); });
 body.addEventListener("pointerout", (e) => { if (e.target.closest("[data-tag]") && !journey.running) stage.hover(null); });
 
+// ---------- painel lateral colapsável (mais espaço para o mapa)
+function setPanelHidden(hide, relayout = true) {
+  const changed = document.body.classList.contains("panel-hidden") !== hide;
+  document.body.classList.toggle("panel-hidden", hide);
+  $("btn-panel-toggle").textContent = hide ? "⇤" : "⇥";
+  $("btn-panel-toggle").setAttribute("aria-expanded", String(!hide));
+  $("btn-panel-toggle").title = hide ? "Mostrar painel lateral (P)" : "Ocultar painel lateral (P)";
+  if (changed && relayout) setTimeout(() => stage.relayout(), 220);
+}
+$("btn-panel-toggle").onclick = () => setPanelHidden(!document.body.classList.contains("panel-hidden"));
+
 // ---------- "Siga o carbono"
 const journey = createJourney(stage, {
-  caption(text, i, n) {
-    $("caption").hidden = !text;
-    if (text) { $("cap-step").innerHTML = Array.from({ length: n }, (_, k) => `<i class="${k < i ? "done" : k === i ? "on" : ""}"></i>`).join(""); $("cap-text").textContent = text; $("cap-text").classList.remove("in"); void $("cap-text").offsetWidth; $("cap-text").classList.add("in"); }
+  onStep(state) {
+    $("caption").hidden = !state;
+    if (!state) return;
+    const { leg, index: i, total: n, color, paused, followCam } = state;
+    $("cap-badge").textContent = leg.mol;
+    $("cap-badge").style.background = color;
+    $("cap-zone").textContent = leg.zone;
+    $("cap-step").innerHTML = Array.from({ length: n }, (_, k) => `<button type="button" class="cap-dot ${k < i ? "done" : k === i ? "on" : ""}" data-leg="${k}" title="Etapa ${k + 1}" aria-label="Etapa ${k + 1}"></button>`).join("");
+    $("cap-pause").textContent = paused ? "▶" : "❚❚";
+    $("cap-pause").setAttribute("aria-label", paused ? "Retomar" : "Pausar");
+    $("cap-cam").classList.toggle("on", followCam);
+    $("cap-cam").setAttribute("aria-pressed", String(followCam));
+    if ($("cap-text").textContent !== leg.text) {
+      $("cap-text").textContent = leg.text;
+      $("cap-text").classList.remove("in");
+      void $("cap-text").offsetWidth;
+      $("cap-text").classList.add("in");
+    }
   },
-  onState(on) { $("journey-btn").textContent = on ? "■ Parar" : "▶ Siga o carbono"; document.body.classList.toggle("journey", on); },
+  onState(on) {
+    $("journey-btn").textContent = on ? "■ Parar jornada" : "▶ Siga o carbono";
+    if ($("btn-journey")) {
+      $("btn-journey").classList.toggle("on", on);
+      $("btn-journey").setAttribute("aria-pressed", String(on));
+    }
+    document.body.classList.toggle("journey", on);
+    if (on) {
+      $("btn-overview").classList.remove("on");
+      $("btn-tour").classList.remove("on");
+      setPanelHidden(true, true);
+    } else {
+      $("btn-overview").classList.toggle("on", mode === "overview");
+      $("btn-tour").classList.toggle("on", mode === "tour");
+      stage.setFollow(mode === "tour");
+      setPanelHidden(false, false);
+      setTimeout(() => { stage.relayout(); stage.frame(mode === "tour" && index >= 0 ? list()[index] : null, 750); }, 220);
+    }
+  },
 });
-$("journey-btn").onclick = () => (journey.running ? journey.stop() : (stage.frame(null, 700), journey.start()));
+const toggleJourney = () => {
+  if (journey.running) journey.stop();
+  else { stage.highlight(null); journey.start(); }
+};
+$("journey-btn").onclick = toggleJourney;
+if ($("btn-journey")) $("btn-journey").onclick = toggleJourney;
+$("cap-prev").onclick = () => journey.prev();
+$("cap-next").onclick = () => journey.next();
+$("cap-pause").onclick = () => journey.togglePause();
+$("cap-cam").onclick = () => journey.toggleFollow();
+$("cap-close").onclick = () => journey.stop();
+$("cap-step").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-leg]");
+  if (b) journey.goTo(Number(b.dataset.leg));
+});
 
 // ---------- passar o mouse: rótulo da peça e conexões acesas
 const LABELS = Object.fromEntries(STOPS.filter((s) => s.tags && !s.badge).map((s) => [s.tags[0], s.kicker]));
@@ -125,15 +196,43 @@ $("legend").addEventListener("click", (e) => {
 });
 
 function padding() {
-  // no celular o painel cobre a parte de baixo do mapa
   if (!mobile.matches) return { top: 0, bottom: 0 };
   return { top: 0, bottom: 0 };
 }
 
 function list() { return mode === "tour" ? tourStops : exploreStops; }
 
+// ---------- avanço automático das etapas (Tour guiado e exploração)
+const AUTO_STEP_S = 5.0; // segundos por etapa
+let autoPlay = false, autoElapsed = 0, lastAutoT = 0;
+function setAutoPlay(on) {
+  autoPlay = on;
+  autoElapsed = 0;
+  $("tour-auto").classList.toggle("on", on);
+  $("tour-auto").setAttribute("aria-pressed", String(on));
+  $("tour-auto-ico").textContent = on ? "❚❚" : "▶";
+  $("auto-bar").style.width = "0%";
+}
+$("tour-auto").onclick = () => setAutoPlay(!autoPlay);
+stage.onFrame((t) => {
+  const dt = lastAutoT ? Math.min(0.1, t - lastAutoT) : 0;
+  lastAutoT = t;
+  if (!autoPlay || index < 0 || journey.running) return;
+  autoElapsed += dt;
+  const pct = Math.min(100, (autoElapsed / AUTO_STEP_S) * 100);
+  $("auto-bar").style.width = `${pct.toFixed(1)}%`;
+  if (autoElapsed >= AUTO_STEP_S) {
+    autoElapsed = 0;
+    const L = list();
+    const firstZone = mode === "tour" ? Math.max(0, L.findIndex((s) => !s.tourOnly)) : 0;
+    if (index < L.length - 1) show(index + 1);
+    else show(firstZone);
+  }
+});
+
 function showIndex() {
   index = -1;
+  setAutoPlay(false);
   body.innerHTML = renderIndex(STOPS, CHAPTERS);
   body.scrollTop = 0;
   $("panel-nav").hidden = true;
@@ -144,13 +243,15 @@ function showIndex() {
 function show(i) {
   const L = list();
   index = Math.max(0, Math.min(L.length - 1, i));
+  autoElapsed = 0;
+  $("auto-bar").style.width = "0%";
   const stop = L[index];
   body.innerHTML = renderStop(stop, { index, total: L.length, inTour: mode === "tour" });
   markMonth();
   body.scrollTop = 0;
   $("panel-nav").hidden = false;
-  $("prev").disabled = index === 0;
-  $("next").disabled = index === L.length - 1;
+  $("prev").disabled = index === 0 && !autoPlay;
+  $("next").disabled = index === L.length - 1 && !autoPlay;
   progress.style.setProperty("--p", `${((index + 1) / L.length) * 100}%`);
   progress.setAttribute("aria-label", `Etapa ${index + 1} de ${L.length}`);
   stage.highlight(stop.tags || stop.streams !== "all" ? stop : null);
@@ -160,13 +261,18 @@ function show(i) {
 }
 
 function open(id) {
+  if (journey.running) journey.stop();
+  if (document.body.classList.contains("panel-hidden")) setPanelHidden(false, true);
   const L = list();
   const i = L.findIndex((s) => s.id === id);
   if (i >= 0) show(i);
   else if (mode === "tour") { setMode("overview"); open(id); }
 }
 
-function setMode(m) {
+function setMode(m, { auto = m === "tour" } = {}) {
+  if (journey.running) journey.stop();
+  if (document.body.classList.contains("panel-hidden")) setPanelHidden(false, true);
+  const prevId = index >= 0 ? list()[index]?.id : null;
   mode = m;
   document.body.dataset.mode = m;
   stage.setFollow(m === "tour");
@@ -175,8 +281,13 @@ function setMode(m) {
   $("btn-overview").setAttribute("aria-pressed", String(m === "overview"));
   $("btn-tour").setAttribute("aria-pressed", String(m === "tour"));
   $("back-overview").hidden = m !== "tour";
-  if (m === "tour") show(0);
-  else { stage.frame(null, 900); showIndex(); }
+  setAutoPlay(auto);
+  if (m === "tour") {
+    const L = list();
+    const resumeIdx = prevId ? L.findIndex((s) => s.id === prevId) : -1;
+    const firstZone = Math.max(0, L.findIndex((s) => !s.tourOnly));
+    show(resumeIdx >= 0 ? resumeIdx : firstZone);
+  } else { stage.frame(null, 750); showIndex(); }
 }
 
 // ---------- projeto × auditado: refaz as etapas e reabre a que estava aberta
@@ -192,23 +303,52 @@ for (const b of document.querySelectorAll("[data-datamode]")) b.onclick = () => 
 document.body.dataset.data = dataMode;
 for (const b of document.querySelectorAll("[data-datamode]")) { const on = b.dataset.datamode === dataMode; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); }
 
+// ---------- controles de zoom e navegação livre no mapa
+$("zm-in").onclick = () => stage.zoomBy(1.45, undefined, undefined, true);
+$("zm-out").onclick = () => stage.zoomBy(1 / 1.45, undefined, undefined, true);
+$("zm-reset").onclick = () => {
+  if (mode === "tour" && index >= 0) stage.frame(list()[index], 550);
+  else stage.resetView(550);
+};
+stage.onViewChange(({ userZoomed }) => {
+  $("zm-reset").hidden = !userZoomed;
+});
+
 $("btn-overview").onclick = () => setMode("overview");
 $("back-overview").onclick = () => setMode("overview");
 $("btn-tour").onclick = () => setMode("tour");
-$("prev").onclick = () => show(index - 1);
-$("next").onclick = () => show(index + 1);
+$("prev").onclick = () => { const L = list(); show((index - 1 + L.length) % L.length); };
+$("next").onclick = () => { const L = list(); show((index + 1) % L.length); };
 $("sheet-handle").onclick = () => panel.classList.toggle("min");
 body.addEventListener("click", (e) => {
+  if (e.target.closest("summary")) setAutoPlay(false);
   if (e.target.closest("[data-home]")) showIndex();
   if (e.target.closest("[data-tour]")) setMode("tour");
+  if (e.target.closest("[data-journey]")) toggleJourney();
   const go = e.target.closest("[data-go]");
-  if (go) open(go.dataset.go);
+  if (go) { open(go.dataset.go); return; }
+  const tagEl = e.target.closest("[data-tag]");
+  if (tagEl) {
+    const targetStop = stage.byTag[tagEl.dataset.tag];
+    if (targetStop) open(targetStop);
+  }
 });
 document.addEventListener("keydown", (e) => {
   if (e.target.closest("input, textarea, summary")) return;
-  if (e.key === "ArrowRight" && index >= 0) show(index + 1);
-  if (e.key === "ArrowLeft" && index >= 0) show(index - 1);
+  if (journey.running) {
+    if (e.key === "ArrowRight") { e.preventDefault(); journey.next(); return; }
+    if (e.key === "ArrowLeft") { e.preventDefault(); journey.prev(); return; }
+    if (e.key === " ") { e.preventDefault(); journey.togglePause(); return; }
+    if (e.key === "Escape") { e.preventDefault(); journey.stop(); return; }
+  }
+  if (e.key === " " && index >= 0) { e.preventDefault(); setAutoPlay(!autoPlay); return; }
+  if (e.key === "ArrowRight" && index >= 0) { const L = list(); show((index + 1) % L.length); }
+  if (e.key === "ArrowLeft" && index >= 0) { const L = list(); show((index - 1 + L.length) % L.length); }
   if (e.key === "Escape") setMode("overview");
+  if (e.key === "p" || e.key === "P") setPanelHidden(!document.body.classList.contains("panel-hidden"));
+  if (e.key === "+" || e.key === "=") stage.zoomBy(1.4, undefined, undefined, true);
+  if (e.key === "-" || e.key === "_") stage.zoomBy(1 / 1.4, undefined, undefined, true);
+  if (e.key === "0") stage.resetView(550);
 });
 addEventListener("resize", () => { stage.setPadding(padding()); stage.relayout(); });
 

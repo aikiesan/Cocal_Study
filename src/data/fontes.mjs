@@ -14,6 +14,6 @@ export const FONTES = {
   novacana2026: { t: "NovaCana / CNN Brasil (27 out. 2026) · 44 caminhões a biometano para vinhaça" },
   osm: { t: "© Colaboradores do OpenStreetMap (ODbL) · nomes e canais de vinhaça do complexo", u: "https://www.openstreetmap.org/copyright" },
   sicar: { t: "SICAR · Cadastro Ambiental Rural (WFS público)", u: "https://geoserver.car.gov.br/geoserver/sicar/wfs" },
-  gemeo: { t: "Gêmeo digital Cocal Narandiba (Blender/glTF) · aikiesan/cocal_simulation", u: "https://github.com/aikiesan/cocal_simulation" },
+  gemeo: { t: "Levantamento geométrico sobre imagens de satélite (Esri World Imagery)" },
   ecossistema: { t: "Ecossistema do Biogás · CP2b (motor deste diorama)", u: "https://github.com/aikiesan/Biogas_Ecosystem" },
 };

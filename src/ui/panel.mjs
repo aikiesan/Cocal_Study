@@ -12,8 +12,11 @@ export function renderIndex(stops, chapters) {
     <p class="eyebrow">Estudo de caso · CP2b</p>
     <h2>Como a Cocal Narandiba transforma resíduos da cana em biometano, energia, CO₂ e adubo.</h2>
     <p class="lede">Toque num número no mapa ou escolha uma etapa abaixo. Cada etapa traz uma mensagem, uma figura e a classe de cada número: <b>confirmado</b>, <b>projeto</b>, <b>auditado*</b> ou <b>inferido</b>.</p>
-    <p class="lede small">Diorama esquemático feito a partir de fontes públicas e de um gêmeo digital montado sobre imagens de satélite. Não é material da empresa. *Valores "auditados" vêm da especificação do projeto e não foram reverificados.</p>
-    <button type="button" class="cta-tour" data-tour>▶ Começar o tour guiado</button>
+    <p class="lede small">Diorama esquemático feito a partir de fontes públicas e de imagens de satélite. Não é material da empresa. *Valores "auditados" vêm da especificação do projeto e não foram reverificados.</p>
+    <div class="home-ctas">
+      <button type="button" class="cta-tour" data-tour>▶ Tour guiado</button>
+      <button type="button" class="cta-journey" data-journey>↻ Siga o carbono</button>
+    </div>
     ${groups}
   </div>`;
 }
